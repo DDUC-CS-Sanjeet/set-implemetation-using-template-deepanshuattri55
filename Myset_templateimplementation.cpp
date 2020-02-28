@@ -1,475 +1,412 @@
 #include<iostream>
-#include<math.h>
-#include<string.h>
-
+#include<cmath>
 using namespace std;
-template<typename T>
+template<typename t>
 class MySet
 {
-    private:
-    int n;
-    T *p;
-    public:
-    MySet()
-    {
-        n=0;
-    }
-
-    MySet(int m)
-    {
-        n=m;
-    	p= new T[n];
-        input();
-    }
-    void set(int m)
-    {
-    	n=m;
-    	p= new T[n];
-	}
-    void input()
-    {
-
-            cout<<"Enter element of your set : \n";
-            for(int i =0;i<n;i++)
-            {
-                cin>>p[i];
-            }
-            removeduplicate();
-            display();
-    }
-    void display()
-    {
-        cout<<"\nYour set is : {";
-        for(int i =0;i<n;i++)
-            {
-                cout<<p[i];
-                if(i!=n-1)
-                    cout<<",";
-            }
-            cout<<"}"<<endl;
-            cout<<"Cardinality of this set is : "<<this->n<<endl;
-    }
-    void removeduplicate()
-    {
-        for(int i=0;i<n;i++)
-        {
-            for(int j=i+1;j<n;)
-            {
-                if(p[i]==p[j])
-                {
-                    for(int k=j;k<n-1;k++)
-                    {
-                        p[k]=p[k+1];
-                    }
-                    n--;
-                }
-                else
-                {
-                    j++;
-                    
-                }
-                
-            }
-        }
-    }
-
-    void powerset() 
-	{ 
-    	int pow_set_size = pow(2,n); 
-    	int counter, j; 
-
-		cout<<"{ ";
-	    for(counter = 0; counter < pow_set_size; counter++) 	
-   		{ 
-   			if(counter!=0)
-   			cout<<",";
-   			
-   			cout<<"{ ";
-    		for(j = 0; j < n; j++) 
-    		{ 	
-        		if(counter & (1 << j)) 
-        		{
-        			if(j!=0)
-					cout<<" ";
-					cout <<p[j];
+	private : 
+		int size;
+		t *ar;
+	public :
+		MySet()//default construtor
+		{
+			size=1;
+			ar=new t[1];
+			//ar[0]='N';
+		}
+		MySet(int sze)//parameterised constructor
+		{
+			size=sze;
+			ar=new t[size];
+		}
+		int cardinality()
+		{
+			return size;
+		}
+		void takeInput()
+		{
+			cout<<"Enter the elements of your set : ";
+			for(int i=0;i<size;i++)
+			{
+				cin>>ar[i];
+			}
+			RemovDuplcates(ar,size);
+			
+		}
+		void RemovDuplcates(t ar[],int &size)
+		{
+			for(int i=0;i<size;i++)
+			{
+				for(int j=i+1;j<size;j++)
+				{
+					if(ar[i]==ar[j])
+					{
+						int temp=j+1;
+					for(int k=j;k<size;k++,temp++)
+					{
+						ar[k]=ar[temp];
+					}
+					size--;
+					}
 				}
-         	 
-    		} 
-    		cout<<"} ";
-    	
-    	}
-		cout<<"}"; 
-	} 
-    
-    MySet operator +(MySet b)
-    {
-         MySet temp;
-        temp.set(this->n+b.n);
-        int index=0;
-        for(int i=0;i<this->n;i++)
-        {
-            temp.p[index++]=this->p[i];
-        }
-        for(int i=0;i<b.n;i++)
-        {
-            temp.p[index++]=b.p[i];
-        }
-        temp.removeduplicate();
-        return temp;
-    }
-    MySet operator *(MySet b)
-    {
-        int index=0;
-        for(int i=0;i<this->n;i++)
-        {
-            for(int j=0;j<b.n;j++)
-            {
-                if(this->p[i]==b.p[j])
-                    index++;
-            }           
-        }
-        MySet temp;
-        temp.set(index);
-        index=0;
-        for(int i=0;i<this->n;i++)
-        {
-            for(int j=0;j<b.n;j++)
-            {
-                if(this->p[i]==b.p[j])
-                    temp.p[index++]=b.p[j];
-            }           
-        }
-        temp.removeduplicate();
-        return temp;
-    }
-
-    MySet operator -(MySet b)
-    {
-    	bool flag=false;
-        int index=0;
-        for(int i=0;i<this->n;i++)
-        {
-        	flag=false;
-            for(int j=0;j<b.n;j++)
-            {
-                if(this->p[i]==b.p[j])
-                {
-                	flag=true;
-                	break;
+			}
+		}
+		void display()
+		{
+			cout<<"\nYour set is : "<<"\n { ";
+			for(int i=0;i<size;i++)
+			{
+				cout<<ar[i]<<" ";
+			}
+			cout<<"}\n";
+		}
+		void powerSet()
+		{
+			int counter=0,flag;
+			int newCounter=0;
+			cout<<"\n {   ";
+			for(int i=0;i<pow(2,size);i++)
+			{
+				cout<<"{";
+				for(int te=i,j=0;j<size;j++)
+				{
+					if(te&1)
+					{
+						if(counter>=1)
+						{
+							cout<<",";
+						}
+						cout<<ar[j];
+						counter++;
+					}
+					te=te>>1;
 				}
-            }  
-			if(flag)
-				index++;        
-        }
-        
-        MySet temp;
-        temp.set(this->n-index);
-        index=0;
-        for(int i=0;i<this->n;i++)
-        {
-            
-            for(int j=0;j<b.n;j++)
-            {
-            	flag=false;
-                if(this->p[i]==b.p[j])
-                    break;
-                else
-                {
-                	flag =true;
+				counter=0;
+				cout<<"}";
+				if(i<pow(2,size)-1)
+				{
+					cout<<" , ";
 				}
-            }
-            if(flag==true)
-            {
-            	temp.p[index++]=this->p[i];
-			}    
-        }
-        temp.removeduplicate();
-        return temp;
-    }
-
-    void operator =(MySet b)
-    {
-        b.n=this->n;
-        for(int i=0;i<b.n;i++)
-            b.p[i]=this->p[i];
-    }
-
-    bool operator ==(MySet b)
-    {
-        if(this->n!=b.n )
-            return false;
-        else
-        {
-            int j=0;
-            bool flag=false;
-
-            while(true)
-            {
-                for(int i=j;i<this->n;i++)
-                {
-                   if(this->p[i]==b.p[i])
-                       {
-                           flag=true;
-                           break;
-                       }
-                       else
-                       {
-                           flag=false;
-                       }
-               }
-               if(flag==false)
-                    break;
-               else if(flag && j==this->n-1)
-                    break;
-               j++;
-            }
-            if(flag)
-                return true;
-            
-            return false;
-        }
-    }
+			}
+			cout<<" }";
+		}
+		MySet operator*(MySet obj2);
+		MySet operator+(MySet obj2);
+		MySet operator-(MySet obj2);
+		MySet operator^(MySet obj2);
+		void operator==(MySet obj2);
+		MySet& operator=(const MySet& obj2);
 };
-
+template<typename t>
+MySet<t>& MySet<t>::operator=(const MySet<t>& obj2)
+{
+	this->size=obj2.size;
+	this->ar=new t[this->size];
+	for(int i=0;i<this->size;i++)
+	{
+		this->ar[i]=obj2.ar[i];
+	}
+	return *this;
+}
+template<typename t>
+void MySet<t>::operator==(MySet<t> obj2)
+{
+	if(size==obj2.size)
+	{
+		int flag=0;
+		for(int i=0;i<size;i++)
+		{
+			if(ar[i]==obj2.ar[i])
+			{
+				flag++;
+			}
+			else
+			{
+				break;
+			}	
+		}	
+		if(flag==size)
+		{
+			cout<<"\n Both the sets are equal   \n\n";
+		}
+		else
+		{
+			cout<<"\nSets are not equal  \n\n";
+		}
+	}
+	else
+	{
+		cout<<"\nSets are not equal\n";
+	}
+}
+template<typename t>
+MySet<t> MySet<t>::operator^(MySet<t> obj2)
+{
+	//First we'll find union of the two sets
+	int i,j;
+	MySet <t>temp1;
+	temp1.size=size+obj2.size;
+	for(i=0;i<size;i++)
+	{
+		temp1.ar[i]=ar[i];
+	}
+	for(i=size,j=0;i<size+obj2.size&&j<obj2.size;i++,j++)
+	{
+		temp1.ar[i]=obj2.ar[j];
+	}
+	temp1.RemovDuplcates(temp1.ar,temp1.size);
+	//Now we'll find their intersection
+	MySet <t>temp2(size);
+	int flag=0,counter=0;
+		for(int i=0;i<size;i++)
+		{
+			for(int j=0;j<obj2.size;j++)
+			{
+				if(ar[i]==obj2.ar[j])
+				{
+					temp2.ar[flag]=ar[i];
+					++flag;
+					++counter;
+					if(flag==temp2.size-1)
+					{
+						i=size;
+					}
+					break;
+				}
+			}
+		}
+		temp2.size=counter;
+	//Now we'll take the Difference of the sets above formed by doing union and taking intersection 
+	MySet <t>Finaltemp(temp1.size);
+	 flag=0;
+	int indx=0;
+	counter=0;
+		for(int i=0;i<temp1.size;i++)
+		{
+			for(int j=0;j<temp2.size;j++)
+			{
+				if(temp1.ar[i]!=temp2.ar[j])
+				{
+					flag++;
+				}
+			}
+			if(flag==temp2.size)
+			{
+				Finaltemp.ar[indx]=temp1.ar[i];
+				indx++;
+				counter++;
+			}
+			flag=0;
+		}
+		Finaltemp.size=counter;
+		cout<<"\nAfter taking Symmetric difference of the first two sets ,\n";
+		//Finaltemp.display();
+		return Finaltemp;
+}
+template<typename t>
+MySet<t> MySet<t>::operator-(MySet<t> obj2)
+{
+	MySet <t>temp(size);
+	int flag=0;
+	int indx=0;
+	int counter=0;
+		for(int i=0;i<size;i++)
+		{
+			for(int j=0;j<obj2.size;j++)
+			{
+				if(ar[i]!=obj2.ar[j])
+				{
+					flag++;
+				}
+			}
+			if(flag==obj2.size)
+			{
+				temp.ar[indx]=ar[i];
+				indx++;
+				counter++;
+			}
+			flag=0;
+		}
+		temp.size=counter;
+		cout<<"\nAfter taking difference of the first two sets ,\n";
+		//temp.display();
+		return temp;
+}
+template<typename t>
+MySet<t> MySet<t>::operator+(MySet<t> obj2)
+{
+	int i,j;
+	MySet <t>temp;
+	temp.size=size+obj2.cardinality();
+	for(i=0;i<size;i++)
+	{
+		temp.ar[i]=ar[i];
+	}
+	for(i=size,j=0;i<size+obj2.size&&j<obj2.size;i++,j++)
+	{
+		temp.ar[i]=obj2.ar[j];
+	}
+	temp.RemovDuplcates(temp.ar,temp.size);
+	//temp.display();
+	return temp;
+}
+template<typename t>
+MySet<t> MySet<t>::operator*(MySet<t> obj2)
+{
+	MySet <t>Newtemp(size);
+	int counter=0,flag=0;
+	for(int i=0;i<size;i++)
+	{
+		for(int j=0;j<obj2.size;j++)
+		{
+			if(ar[i]==obj2.ar[j])
+			{
+				Newtemp.ar[flag]=ar[i];
+				++flag;
+				++counter;
+				if(flag==Newtemp.size-1)
+				{
+					i=size;
+				}
+				break;
+			}
+		}
+	}
+	Newtemp.size=counter;
+	cout<<"\nsize : "<<flag<<"\n";
+	cout<<"\nYour set after intersection with union is :\n ";
+	//Newtemp.display();
+	return Newtemp;
+}
+void menu()
+{
+	cout<<"   \nMenu of Sets ... Enter your choice : \n";
+	cout<<"\n 1) Print intersection of two sets";
+	cout<<"\n 2) Print union of two sets";
+	cout<<"\n 3) Print difference of two sets";
+	cout<<"\n 4) Print Symmetric difference of two sets";
+	cout<<"\n 5) To check if the two sets are equal or not ";
+	cout<<"\n 6) To see the cardinality of : \n";
+	cout<<"           a) First set\n";
+	cout<<"           b) Second set";
+	cout<<"\n 7) To print the power sets of : \n";
+	cout<<"           a) First set\n";
+	cout<<"           b) Second set\n";
+	cout<<"\n";
+}
+void newMenu()
+{
+	cout<<"\nWelcome \n \n   Enter which type of strings you wish to use for this program : \n";
+	cout<<"\n  1) Character";
+	cout<<"\n  2) Integer";
+	cout<<"\n  3) Decimal\n";
+}
+template <typename t>
+void play(t typeVar)
+{
+		int size1,size2,wish;
+		char choice='y';
+			cout<<"Enter the size of your first set : ";
+			    cout<<endl;
+				cin>>size1;
+				cout<<endl;
+				MySet <t>ob1(size1);
+				ob1.takeInput();
+				ob1.display();
+				cout<<"Enter the size of your second set : ";
+				cout<<endl;
+				cin>>size2;
+				cout<<endl;
+				MySet <t>ob2(size2);
+				ob2.takeInput();
+				ob2.display();
+				MySet <t>ob3(size1+size2);
+			do
+			{
+				menu();
+				cout<<"Enter your choice : ";
+				cin>>wish;
+				switch(wish)
+				{
+					case 1: ob3=ob1*ob2;
+							ob3.display();
+							break;
+					case 2: ob3=(ob1+ob2);
+							ob3.display();
+							break;	
+					case 3: ob3=ob1-ob2;
+							ob3.display();
+							break;	
+					case 4: ob3=ob1^ob2;
+							ob3.display();
+							break;
+					case 5: ob1==ob2;
+							break;
+					case 6: cout<<"Press 'a' to see 1st set cardinality or 'b' to see 2nd cardinality : ";
+							char cno;
+							cin>>cno;
+							switch(cno)
+							{
+								case 'a':cout<<"\nCcadianlity of 1st set is : ";
+										cout<<ob1.cardinality();
+										break;
+								case 'b':cout<<"\nCcadianlity of 2nd set is : ";
+										cout<<ob2.cardinality();
+										break;
+								default:cout<<"Incorrect input :(\n\n";
+							}
+							break;
+					case 7: cout<<"Press 'a' to print the power set of 1st set and 'b' for the 2nd set : ";
+							char pwr;
+							cin>>pwr;
+							switch(pwr)
+							{
+								case 'a':cout<<"\nPower set of 1st set is : ";
+									ob1.powerSet();
+									break;
+								case 'b':cout<<"\nPower set of 2nd set is : ";
+									ob2.powerSet();
+									break;
+								default:cout<<"invalid input :"<<endl;
+							}
+							break;
+							default: cout<<"You've entered an incorrect input :(";		
+				}
+				cout<<"\nDo you wish to continue(press y for yes or n for no ): ";
+				cin>>choice;
+			}while(choice=='y'||choice=='Y');
+}
 int main()
 {
-
-
-	
-    int choice,choice2,n,m;
-    char h;
-    do 
-     {
-        cout<<"1 for powerset of a set"<<endl;
-        cout<<"2 for union of two set"<<endl;
-        cout<<"3 for intersection of two set"<<endl;
-        cout<<"4 for difference between two set"<<endl;
-        cout<<endl;
-        cout<<"Enter your choice : ";
-        cin>>choice;
-        cout<<endl;
-
-        switch(choice)
-        {
-            case 1:
-                cout<<"\nenter 1 for numeric elenemt in a set "<<endl;
-                cout<<"ente 2 for character element in a set "<<endl;
-                cout<<"enter 3 for string type element "<<endl;
-                cout<<endl;
-                cout<<"Ente your type : ";
-                cin>>choice2;
-                cout<<endl;
-        
-                   if(choice2!=2&&choice2!=3)
-                        {
-                       	cout<<"Enter the size of set : ";
-                        cin>>n;
-                        cout<<endl;
-                    	MySet<double> a(n);
-                        a.powerset();
-                        break;
-						}
-                    
-                    
-                    else if(choice2==2)
-                       {
-                       	cout<<"Enter the size of set : ";
-                        cin>>n;
-                        cout<<endl;
-                        MySet<char> c(n);
-                        c.powerset();
-                        break;
-					   }
-                    
-                    
-                    else if(choice2==3)
-                    {
-                    	cout<<"Enter the size of set : ";
-                        cin>>n;
-                        cout<<endl;
-                        MySet<string> e(n);
-                        e.powerset();
-                        break;
-					}
-                        
-                
-            case 2:
-                cout<<"\nenter 1 for numeric elenemt in a set "<<endl;
-                cout<<"enter 2 for character element in a set "<<endl;
-                cout<<"enter 3 for string type element "<<endl;
-                cout<<endl;
-                cout<<"Ente your type : ";
-                cin>>choice2;
-                cout<<endl;
-               
-                    if(choice2!=2&&choice2!=3)
-                    {
-                    	                    
-                    	cout<<"Enter the size of first set : ";
-                        cin>>n;
-                        cout<<endl;
-                        MySet<double> a(n);
-                        cout<<"\nEnter the size of second set : ";
-                        cin>>m;
-                        cout<<endl;
-                        MySet<double> b(m);
-                        MySet<double> x=a+b;
-                        x.display();
-                        break;	
-					}
-
-                    else if(choice2==2)
-                    {
-                    	cout<<"Enter the size of first set : ";
-                        cin>>n;
-                        cout<<endl;
-                        MySet<char> c(n);
-                        cout<<"\nEnter the size of second set : ";
-                        cin>>m;
-                        cout<<endl;
-                        MySet<char> d(m);
-                        MySet<char> y=c+d;
-                        y.display();
-                        break;
-					}
-           
-                   else if(choice2==3)
-                   {
-                   	    cout<<"Enter the size of first set : ";
-                        cin>>n;
-                        cout<<endl;
-                        MySet<string> c(n);
-                        cout<<"\nEnter the size of second set : ";
-                        cin>>m;
-                        cout<<endl;
-                        MySet<string> d(m);
-                        MySet<string> z=c+d;
-                        z.display();
-                        break;
-				   }
-  
-                case 3:
-
-                cout<<"\nenter 1 for numeric elenemt in a set "<<endl;
-                cout<<"enter 2 for character element in a set "<<endl;
-                cout<<"enter 3 for string type element "<<endl;
-                cout<<endl;
-                cout<<"Ente your type : ";
-                cin>>choice2;
-                cout<<endl;
-                    
-                    if(choice2!=2&&choice2!=3)
-                    {
-                    	cout<<"Enter the size of first set : ";
-                        cin>>n;
-                        cout<<endl;
-                        MySet<double> a(n);
-                        cout<<"\nEnter the size of second set : ";
-                        cin>>m;
-                        cout<<endl;
-                        MySet<double> b(m);
-                        MySet<double> x=a*b;
-                        x.display();
-                        break;
-					}
-                    
-
-
-                    else if(choice2==2)
-                    {
-                    	cout<<"Enter the size of first set : ";
-                        cin>>n;
-                        cout<<endl;
-                        MySet<char> c(n);
-                        cout<<"\nEnter the size of second set : ";
-                        cin>>m;
-                        cout<<endl;
-                        MySet<char> d(m);
-                        MySet<char> y=c*d;
-                        y.display();
-                        break;
-					}
-
-                    else if(choice2==3)
-                   {
-                   	    cout<<"Enter the size of first set : ";
-                        cin>>n;
-                        cout<<endl;
-                        MySet<string> c(n);
-                        cout<<"\nEnter the size of second set : ";
-                        cin>>m;
-                        cout<<endl;
-                        MySet<string> d(m);
-                        MySet<string> z=c*d;
-                        z.display();
-                        break;
-				   }
-
-                case 4:
-                cout<<"\nenter 1 for numeric elenemt in a set "<<endl;
-                cout<<"enter 2 for character element in a set "<<endl;
-                cout<<"enter 3 for string type element "<<endl;
-                cout<<endl;
-                cout<<"Ente your type : ";
-                cin>>choice2;
-                cout<<endl;
-
-                    if(choice2!=2&&choice2!=3)
-                    {
-                    	cout<<"Enter the size of first set : ";
-                        cin>>n;
-                        cout<<endl;
-                        MySet<double> a(n);
-                        cout<<"\nEnter the size of second set : ";
-                        cin>>m;
-                        cout<<endl;
-                        MySet<double> b(m);
-                        MySet<double> x=a-b;
-                        x.display();
-                        break;
-					}
-                    
-
-
-                    else if(choice2==2)
-                    {
-                    	cout<<"Enter the size of first set : ";
-                        cin>>n;
-                        cout<<endl;
-                        MySet<char> c(n);
-                        cout<<"\nEnter the size of second set : ";
-                        cin>>m;
-                        cout<<endl;
-                        MySet<char> d(m);
-                        MySet<char> y=c-d;
-                        y.display();
-                        break;
-					}
-
-                    else if(choice2==3)
-                   {
-                   	    cout<<"Enter the size of first set : ";
-                        cin>>n;
-                        cout<<endl;
-                        MySet<string> c(n);
-                        cout<<"\nEnter the size of second set : ";
-                        cin>>m;
-                        cout<<endl;
-                        MySet<string> d(m);
-                        MySet<string> z=c-d;
-                        z.display();
-                        break;
-				   }
-                default:
-                cout<<"Invalid choice "<<endl; 
-        }
-        cout<<"\nDo you want to continue y/n : ";
-        cin>>h;
-        cout<<endl;
-        
-
-    }while(h=='y');
-    return 0;
+	cout<<"      Welcome to sets ....   :";
+     cout<<endl;
+	newMenu();
+	int strngType;
+	cout<<"\nEnter your choice : ";
+	cin>>strngType;
+	cout<<endl;
+	char c;
+	int i;
+	double d;
+	switch(strngType)
+	{
+		case 1: 
+		{
+			play(c);
+			break;
+		}
+		case 2 :
+		{
+			play(i);
+			break;
+		}
+		case 3:
+		{
+			play(d);			
+			break;
+		}
+		default: cout<<"\n this type of input does not exist";
+	}
+	cout<<"\nthank you";
+	return 0;
 }
-
-
